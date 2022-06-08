@@ -31,9 +31,6 @@ use spi_flash::{SpiNand, SpiNor};
 use time::U32Ext;
 use uart::{Config, Parity, Serial, StopBits, WordLength};
 
-// taken from oreboot
-pub type EntryPoint = unsafe extern "C" fn(r0: usize, r1: usize);
-
 const STACK_SIZE: usize = 1 * 1024; // 1KiB
 
 const GPIO_BASE_ADDR: u32 = 0x0200_0000;
@@ -198,6 +195,8 @@ extern "C" fn main() {
     let id = flash.read_id();
     println!("SPI flash vendor {:x} part {:x}{:x}\n", id[0], id[1], id[2],);
 
+    let payload_addr = RAM_BASE;
+
     // 32K, the size of boot0
     let base = 0x1 << 15;
     let size: usize = 15400;
@@ -205,19 +204,14 @@ extern "C" fn main() {
         let off = base + i * 4;
         let buf = flash.copy_into([(off >> 16) as u8, (off >> 8) as u8 % 255, off as u8 % 255]);
 
-        let addr = RAM_BASE + i * 4;
-        let val = u32::from_le_bytes([buf[3], buf[2], buf[1], buf[0]]);
+        let addr = payload_addr + i * 4;
+        let val = u32::from_le_bytes([buf[0], buf[1], buf[2], buf[3]]);
         unsafe { write_volatile(addr as *mut u32, val) };
         let rval = unsafe { read_volatile(addr as *mut u32) };
 
         if rval != val {
             println!("MISMATCH {addr} r{:08x} :: {:08x}", rval, val);
         }
-        /*
-        if i < 10 || i == 256 {
-            println!("{:08x} :: {:08x}", val, rval);
-        }
-        */
     }
 
     let spi = flash.free();
@@ -228,13 +222,10 @@ extern "C" fn main() {
             core::arch::asm!("nop")
         }
     }
-    let addr = RAM_BASE;
-    println!("Run payload at {:#x}", addr);
+    println!("Run payload at {:#x}", payload_addr);
     unsafe {
-        let f: unsafe extern "C" fn() = transmute(addr);
+        let f: unsafe extern "C" fn() = transmute(payload_addr);
         f();
-        // let f = transmute::<usize, EntryPoint>(addr);
-        // f(0, 0);
     }
 }
 
