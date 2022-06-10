@@ -38,6 +38,15 @@ cargo flash nor
 It would do all `cargo make` functions, and burn it into NAND or NOR flash on a xfel connected board.
 The D1 chip must be in FEL mode before running this command.
 
+## SD card
+
+To burn an SD card:
+```sh
+sudo dd if=target/riscv64imac-unknown-none-elf/debug/test-d1-flash-bt0.bin of=/dev/diskname bs=8192 seek=16
+```
+
+On a MAC, a typical name is `/dev/disk5`. On Linux, it is likely `/dev/mmcblk0`.
+
 ## Debug Rust code
 
 You need to install any RISC-V bare metal GDB executables before continue.
