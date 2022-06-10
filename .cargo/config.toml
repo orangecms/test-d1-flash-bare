@@ -1,8 +1,7 @@
-[build]
-target = "riscv64imac-unknown-none-elf"
-
-[target.riscv64imac-unknown-none-elf]
-rustflags = [
-    "-C", "link-arg=-Tlink.ld",
-    # "-C", "relocation-model=pic",
-]
+[alias]
+xtask = "run --package xtask --"
+make = "xtask make"
+asm = "xtask asm"
+flash = "xtask flash"
+# debug = "xtask debug"
+gdb = "xtask gdb"

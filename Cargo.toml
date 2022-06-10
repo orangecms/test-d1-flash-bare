@@ -1,10 +1,17 @@
-[package]
-name = "test-d1-flash-bare"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+    "test-d1-flash-bt0",
+    "xtask"
+]
+default-members = ["xtask"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.dev]
+opt-level = 1               # Use slightly better optimizations.
+overflow-checks = false     # Disable integer overflow checks.
+lto = true
 
-[dependencies]
-r0 = "1"
-# d1-pac = "0.0.17"
+# Leave debug symbol information on release compilation mode
+# That's okay, these symbols won't appear on flash binary
+[profile.release]
+debug = true
+lto = true
