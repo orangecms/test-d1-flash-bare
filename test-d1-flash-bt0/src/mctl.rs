@@ -219,7 +219,7 @@ static mut DRAM_PARA: dram_parameters = dram_parameters {
     dram_type: 0x00000003,
     dram_zq: 0x007b7bfb,
     dram_odt_en: 0x00000001,
-    dram_para1: 0x000010d2,
+    dram_para1: 0x000010f2,
     dram_para2: 0x00000000,
     dram_mr0: 0x00001c70,
     dram_mr1: 0x00000042,
@@ -236,9 +236,9 @@ static mut DRAM_PARA: dram_parameters = dram_parameters {
     dram_tpr8: 0x00000000,
     dram_tpr9: 0x00000000,
     dram_tpr10: 0x00000000,
-    dram_tpr11: 0x00870000,
-    dram_tpr12: 0x00000024,
-    dram_tpr13: 0x34050100,
+    dram_tpr11: 0x00760000,
+    dram_tpr12: 0x00000035,
+    dram_tpr13: 0x34050101,
 };
 
 fn readl(reg: usize) -> u32 {
